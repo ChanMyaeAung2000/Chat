@@ -1,0 +1,13 @@
+# dependencies
+chat_frontend/node_modules/
+chat_backend/node_modules/
+
+# env files
+.env
+
+# build output
+chat_frontend/dist/
+chat_backend/dist/
+
+# logs
+*.log
