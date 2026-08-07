@@ -5,28 +5,28 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
+  const { getChatUsers, chatUsers, selectedUser, setSelectedUser, isChatUsersLoading } =
     useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+    getChatUsers();
+  }, [getChatUsers]);
 
   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+    ? chatUsers.filter((user) => onlineUsers.includes(user._id))
+    : chatUsers;
 
-  if (isUsersLoading) return <SidebarSkeleton />;
+  if (isChatUsersLoading) return <SidebarSkeleton />;
 
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
       <div className="border-b border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
           <Users className="size-6" />
-          <span className="font-medium hidden lg:block">Friends</span>
+          <span className="font-medium hidden lg:block">Chats</span>
         </div>
         {/* TODO: Online filter toggle */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
@@ -61,7 +61,6 @@ const Sidebar = () => {
             `}
           >
             <div className="relative mx-auto lg:mx-0">
-              {console.log(user)}
               {user.profilePic ? (
                 <img
                   src={user.profilePic || "/avatar.png"}
@@ -96,7 +95,7 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-4">No chats yet</div>
         )}
       </div>
     </aside>

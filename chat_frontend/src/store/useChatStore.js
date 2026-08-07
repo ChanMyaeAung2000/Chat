@@ -6,8 +6,12 @@ import { useAuthStore } from "./useAuthStore";
 export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
+  friends: [],
+  chatUsers: [],
   selectedUser: null,
   isUsersLoading: false,
+  isFriendsLoading: false,
+  isChatUsersLoading: false,
   isMessagesLoading: false,
 
   getUsers: async () => {
@@ -19,6 +23,71 @@ export const useChatStore = create((set, get) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isUsersLoading: false });
+    }
+  },
+
+  getFriends: async () => {
+    set({ isFriendsLoading: true });
+    try {
+      const res = await axiosInstance.get("/friends");
+      set({ friends: res.data });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to load contacts");
+    } finally {
+      set({ isFriendsLoading: false });
+    }
+  },
+
+  addFriend: async (email) => {
+    try {
+      const res = await axiosInstance.post("/friends/add", { email });
+      const newFriend = res.data.friend;
+      const currentFriends = get().friends;
+      if (!currentFriends.some((f) => f._id === newFriend._id)) {
+        set({ friends: [...currentFriends, newFriend] });
+      }
+      toast.success("Friend added successfully", {
+        icon: "👋",
+        style: {
+          borderRadius: "12px",
+          background: "#1a1a2e",
+          color: "#fff",
+        },
+      });
+      return true;
+    } catch (error) {
+      const message = error.response?.data?.message || "Failed to add friend";
+      if (message.toLowerCase().includes("no exist") || message.includes("not found")) {
+        toast.error("User not exist", {
+          icon: "❌",
+          style: {
+            borderRadius: "12px",
+            background: "#1a1a2e",
+            color: "#fff",
+          },
+        });
+      } else {
+        toast.error(message, {
+          style: {
+            borderRadius: "12px",
+            background: "#1a1a2e",
+            color: "#fff",
+          },
+        });
+      }
+      return false;
+    }
+  },
+
+  getChatUsers: async () => {
+    set({ isChatUsersLoading: true });
+    try {
+      const res = await axiosInstance.get("/messages/chats");
+      set({ chatUsers: res.data });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to load chat list");
+    } finally {
+      set({ isChatUsersLoading: false });
     }
   },
 
