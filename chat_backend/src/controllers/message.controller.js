@@ -178,7 +178,6 @@ export const sendMessage = async (req, res) => {
 
     let imageUrl;
     if (image) {
-      // Upload base64 image to cloudinary
       const uploadResponse = await cloudinary.uploader.upload(image);
       imageUrl = uploadResponse.secure_url;
     }
@@ -313,6 +312,33 @@ export const deleteMessage = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in deleteMessage controller:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getChatUsers = async (req, res) => {
+  try {
+    const myId = req.user._id;
+
+    const messages = await Message.find({
+      $or: [{ senderId: myId }, { receiverId: myId }],
+    });
+
+    const userIds = new Set();
+
+    messages.forEach((msg) => {
+      const sender = msg.senderId.toString();
+      const receiver = msg.receiverId.toString();
+
+      if (sender !== myId.toString()) userIds.add(sender);
+      if (receiver !== myId.toString()) userIds.add(receiver);
+    });
+
+    const chatUsers = await User.find({ _id: { $in: Array.from(userIds) } }).select("-password");
+
+    res.status(200).json(chatUsers);
+  } catch (error) {
+    console.error("Error in getChatUsers: ", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };

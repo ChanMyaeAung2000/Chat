@@ -87,17 +87,27 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePic } = req.body;
+    const { profilePic, fullName } = req.body;
     const userId = req.user._id;
 
-    if (!profilePic) {
-      return res.status(400).json({ message: "Profile pic is required" });
+    const updateData = {};
+
+    if (fullName) {
+      updateData.fullName = fullName;
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    if (profilePic) {
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+      updateData.profilePic = uploadResponse.secure_url;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "Nothing to update" });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { profilePic: uploadResponse.secure_url },
+      updateData,
       { new: true }
     );
 
@@ -114,5 +124,36 @@ export const checkAuth = (req, res) => {
   } catch (error) {
     console.log("Error in checkAuth controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+
+    const user = await User.findById(userId);
+
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordCorrect) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.log("Error in changePassword controller:", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
