@@ -3,14 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL =
-  // import.meta.env.MODE === "development" ? "http://192.168.0.102:5001" : "/";
-  // import.meta.env.MODE === "development" ? "http://192.168.45.189:5001" : "/";cma
-  // import.meta.env.MODE === "development" ? "http://192.168.47.72:5001" : "/"; //cma cu hall
-    // import.meta.env.MODE === "development" ? "http://192.168.45.84:5001" : "/"; //Cma Ayeyar hostel
-    // import.meta.env.MODE === "development" ? "http://192.168.0.235:5001" : "/"; //Cma AGB 1902 Room
-    import.meta.env.MODE === "development" ? "http://192.168.91.75:5001" : "/"; 
-  
+// const BASE_URL = import.meta.env.MODE === "development" ? "http://172.19.8.32:5001" : "/"; 
+  const BASE_URL = import.meta.env.VITE_API_URL || "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,

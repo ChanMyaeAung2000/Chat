@@ -14,10 +14,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-     origin: ["http://localhost:5173","http://192.168.91.75:5173", 
-      "http://192.168.45.189:5173","http://192.168.45.203:5173",
-      "http://192.168.47.72:5173","http://192.168.45.84:5173","http://192.168.89.62:5173"
-    ],
+    //  origin: ["http://localhost:5173","http://192.168.56.1:5173", 
+    //   "http://192.168.45.189:5173","http://192.168.45.203:5173",
+    //   "http://192.168.47.72:5173","http://192.168.45.84:5173","http://172.19.8.32:5173"
+    // ],
+      origin: process.env.CLIENT_URL,
    
     credentials: true,
   },
