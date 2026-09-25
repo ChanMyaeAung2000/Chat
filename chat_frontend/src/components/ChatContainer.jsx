@@ -103,6 +103,9 @@ const ChatContainer = () => {
                         className="sm:max-w-[200px] rounded-md mb-2"
                       />
                     )}
+                    {message.audio && (
+                      <audio src={message.audio} controls className="h-8 mb-1 min-w-[200px]" />
+                    )}
                     {message.text && (
                       <p
                         className={`${

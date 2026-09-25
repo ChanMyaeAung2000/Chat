@@ -45,6 +45,9 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    audio: {
+      type: String,
+    },
     isDeleted: { type: Boolean, default: false },
 
   },
