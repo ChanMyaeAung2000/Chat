@@ -1,27 +1,13 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import { corsOptions } from "./corsOptions.js";
 
 const app = express();
 const server = http.createServer(app);
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: true,
-//     credentials: true,
-//   },
-// });
-
 const io = new Server(server, {
-  cors: {
-    //  origin: ["http://localhost:5173","http://192.168.56.1:5173", 
-    //   "http://192.168.45.189:5173","http://192.168.45.203:5173",
-    //   "http://192.168.47.72:5173","http://192.168.45.84:5173","http://172.19.8.32:5173"
-    // ],
-      origin: process.env.CLIENT_URL,
-   
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 export function getReceiverSocketId(userId) {

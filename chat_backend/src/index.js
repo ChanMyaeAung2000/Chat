@@ -6,6 +6,7 @@ import cors from "cors";
 import path from "path";
 
 import { connectDB } from "./lib/db.js";
+import { corsOptions } from "./lib/corsOptions.js";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
@@ -22,31 +23,9 @@ app.use(express.json({ limit: "10mb" })); // size ကို မင်းလိ�
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.use(cookieParser());
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//   })
-// );
-// app.use(
-//   cors({
-//     origin: true,
-//     credentials: true,
-//   })
-// );
 
-app.use(
+app.use(cors(corsOptions));
 
-  cors({   
-    //  origin: ["http://localhost:5173","http://192.168.91.75:5173", 
-    //   "http://192.168.45.189:5173","http://192.168.45.203:5173",
-    //   "http://192.168.47.72:5173","http://192.168.45.84:5173","http://172.19.8.32:5173"
-    // ],
-      origin: process.env.CLIENT_URL,
-
-    credentials: true,
-  })
-);
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/friends", friendRoutes);
